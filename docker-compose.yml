@@ -1,0 +1,128 @@
+version: '3.9'
+
+services:
+
+  # ─────────────────────────────────────────
+  # PostgreSQL — primary data store
+  # ─────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: flowmetrics-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: flowmetrics
+      POSTGRES_USER: flowmetrics
+      POSTGRES_PASSWORD: flowmetrics_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flowmetrics -d flowmetrics"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # RabbitMQ — message queue between services
+  # Management UI available at http://localhost:15672
+  # Default login: guest / guest
+  # ─────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: flowmetrics-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: flowmetrics
+      RABBITMQ_DEFAULT_PASS: flowmetrics_dev
+    ports:
+      - "5672:5672"     # AMQP protocol (services connect here)
+      - "15672:15672"   # Management UI (browser)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # Flyway — runs database migrations on startup
+  # Reads from ./database/migrations automatically
+  # ─────────────────────────────────────────
+  flyway:
+    image: flyway/flyway:10-alpine
+    container_name: flowmetrics-flyway
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/flowmetrics
+      FLYWAY_USER: flowmetrics
+      FLYWAY_PASSWORD: flowmetrics_dev
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      FLYWAY_CONNECT_RETRIES: 5
+    volumes:
+      - ./database/migrations:/flyway/sql
+
+  # ─────────────────────────────────────────
+  # Ingestion Service (uncomment when ready)
+  # ─────────────────────────────────────────
+  # ingestion-service:
+  #   build: ./ingestion-service
+  #   container_name: flowmetrics-ingestion
+  #   restart: unless-stopped
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flowmetrics
+  #     SPRING_DATASOURCE_USERNAME: flowmetrics
+  #     SPRING_DATASOURCE_PASSWORD: flowmetrics_dev
+  #     SPRING_RABBITMQ_HOST: rabbitmq
+  #     SPRING_RABBITMQ_PORT: 5672
+  #     SPRING_RABBITMQ_USERNAME: flowmetrics
+  #     SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
+  #     GITHUB_WEBHOOK_SECRET: your_webhook_secret_here
+  #   ports:
+  #     - "8080:8080"
+
+  # ─────────────────────────────────────────
+  # Processing Service (uncomment when ready)
+  # ─────────────────────────────────────────
+  # processing-service:
+  #   build: ./processing-service
+  #   container_name: flowmetrics-processing
+  #   restart: unless-stopped
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flowmetrics
+  #     SPRING_DATASOURCE_USERNAME: flowmetrics
+  #     SPRING_DATASOURCE_PASSWORD: flowmetrics_dev
+  #     SPRING_RABBITMQ_HOST: rabbitmq
+  #     SPRING_RABBITMQ_PORT: 5672
+  #     SPRING_RABBITMQ_USERNAME: flowmetrics
+  #     SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
+  #   ports:
+  #     - "8081:8081"
+
+  # ─────────────────────────────────────────
+  # React Dashboard (uncomment when ready)
+  # ─────────────────────────────────────────
+  # dashboard-ui:
+  #   build: ./dashboard-ui
+  #   container_name: flowmetrics-dashboard
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
