@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="flowmetrics@localhost" uuid="c8b9c88a-5a8b-4a32-8aa4-f655ce1d5821">
+    <data-source source="LOCAL" name="flowmetrics@localhost" uuid="39f8708e-4006-4a05-acab-12a232410266">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/flowmetrics</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5433/flowmetrics</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
