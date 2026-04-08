@@ -13,6 +13,8 @@ services:
       POSTGRES_DB: flowmetrics
       POSTGRES_USER: flowmetrics
       POSTGRES_PASSWORD: flowmetrics_dev
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
     ports:
       - "5432:5432"
     volumes:
