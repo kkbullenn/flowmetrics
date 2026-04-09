@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="flowmetrics@localhost" uuid="39f8708e-4006-4a05-acab-12a232410266">
+    <data-source source="LOCAL" name="flowmetrics@localhost" uuid="54e53f62-52bd-4f9f-b413-0b6fca5a15e2">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
