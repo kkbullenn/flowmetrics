@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/ingestion-service/pom.xml" />
+        <option value="$PROJECT_DIR$/processing-service/pom.xml" />
       </list>
     </option>
   </component>
