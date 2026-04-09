@@ -20,6 +20,7 @@ public class WorkflowRunProcessingService {
     private final CommitRepository commitRepository;
     private final DeploymentRepository deploymentRepository;
     private final IncidentRepository incidentRepository;
+    private final DoraMetricsService doraMetricsService;
 
     @Transactional
     public void process(WorkflowRunPayload payload) {
@@ -42,7 +43,7 @@ public class WorkflowRunProcessingService {
 
         // Step 4 — only create deployments for runs on the default branch
         String defaultBranch = payload.getRepository().getDefaultBranch();
-        String headBranch = payload.getWorkflowRun().getHeadBranch();
+        String headBranch    = payload.getWorkflowRun().getHeadBranch();
 
         if (!defaultBranch.equals(headBranch)) {
             log.debug("Skipping deployment — run is on branch '{}', not default branch '{}'",
@@ -51,7 +52,7 @@ public class WorkflowRunProcessingService {
         }
 
         // Step 5 — create the deployment record
-        String conclusion = payload.getWorkflowRun().getConclusion();
+        String conclusion      = payload.getWorkflowRun().getConclusion();
         String deploymentStatus = mapConclusionToDeploymentStatus(conclusion);
 
         Deployment deployment = new Deployment();
@@ -77,6 +78,9 @@ public class WorkflowRunProcessingService {
         } else if ("success".equals(deploymentStatus)) {
             resolveOpenIncident(repo, deployment);
         }
+
+        // Step 7 — recompute DORA metrics snapshots
+        doraMetricsService.computeAndSave(repo);
     }
 
     // ─────────────────────────────────────────
