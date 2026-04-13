@@ -20,7 +20,7 @@ public class DoraMetricsSnapshot {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "repository_id")
     private Repository repository;
 
