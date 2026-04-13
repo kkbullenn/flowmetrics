@@ -1,2 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #f3f4f6; }
+
+:root {
+    --bg:        #0a0c10;
+    --bg2:       #0f1117;
+    --bg3:       #151820;
+    --border:    #1e2330;
+    --border2:   #2a3040;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --accent:    #3b82f6;
+    --accent2:   #60a5fa;
+
+    --elite:     #10b981;
+    --elite-bg:  rgba(16,185,129,0.12);
+    --high:      #3b82f6;
+    --high-bg:   rgba(59,130,246,0.12);
+    --medium:    #f59e0b;
+    --medium-bg: rgba(245,158,11,0.12);
+    --low:       #ef4444;
+    --low-bg:    rgba(239,68,68,0.12);
+
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+}
+
+html, body, #root {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: var(--sans); }
+select { font-family: var(--sans); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(1);    opacity: 0.6; }
+    100% { transform: scale(1.35); opacity: 0; }
+}
+
+@keyframes count-up {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.fade-up { animation: fadeUp 0.5s ease both; }
+.fade-up-1 { animation: fadeUp 0.5s 0.05s ease both; }
+.fade-up-2 { animation: fadeUp 0.5s 0.10s ease both; }
+.fade-up-3 { animation: fadeUp 0.5s 0.15s ease both; }
+.fade-up-4 { animation: fadeUp 0.5s 0.20s ease both; }
+.fade-up-5 { animation: fadeUp 0.5s 0.25s ease both; }
