@@ -28,7 +28,9 @@ jobs:
 
       - name: Build and test
         working-directory: ingestion-service
-        run: ./mvnw verify --no-transfer-progress
+        run: |
+          chmod +x mvnw
+          ./mvnw verify --no-transfer-progress
 
       - name: Upload build artifact
         if: github.ref == 'refs/heads/main'
@@ -89,7 +91,9 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: flowmetrics_test
           SPRING_RABBITMQ_HOST: localhost
           SPRING_RABBITMQ_PORT: 5672
-        run: ./mvnw verify --no-transfer-progress
+        run: |
+          chmod +x mvnw
+          ./mvnw verify --no-transfer-progress
 
       - name: Upload build artifact
         if: github.ref == 'refs/heads/main'
