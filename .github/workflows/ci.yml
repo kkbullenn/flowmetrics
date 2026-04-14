@@ -64,6 +64,9 @@ jobs:
 
       rabbitmq:
         image: rabbitmq:3.13-alpine
+        env:
+          RABBITMQ_DEFAULT_USER: flowmetrics
+          RABBITMQ_DEFAULT_PASS: flowmetrics_dev
         ports:
           - 5672:5672
         options: >-
