@@ -28,7 +28,9 @@
 
 html, body, #root {
     height: 100%;
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, #1c2030 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--text);
     font-family: var(--sans);
     font-size: 14px;
@@ -43,6 +45,21 @@ select { font-family: var(--sans); }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
+/* ── kbd ── */
+kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid var(--border2);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    background: var(--bg3);
+    line-height: 1.5;
+}
+
+/* ── animations ── */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -58,9 +75,55 @@ select { font-family: var(--sans); }
     to   { opacity: 1; transform: scale(1); }
 }
 
-.fade-up { animation: fadeUp 0.5s ease both; }
+@keyframes shimmer {
+    0%   { background-position: -400% 0; }
+    100% { background-position: 400% 0; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(24px); }
+}
+
+@keyframes liveDot {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}
+
+/* ── utility classes ── */
+.fade-up   { animation: fadeUp 0.5s ease both; }
 .fade-up-1 { animation: fadeUp 0.5s 0.05s ease both; }
 .fade-up-2 { animation: fadeUp 0.5s 0.10s ease both; }
 .fade-up-3 { animation: fadeUp 0.5s 0.15s ease both; }
 .fade-up-4 { animation: fadeUp 0.5s 0.20s ease both; }
 .fade-up-5 { animation: fadeUp 0.5s 0.25s ease both; }
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bg2) 25%,
+        var(--bg3) 50%,
+        var(--bg2) 75%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.spin {
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+.live-dot {
+    animation: liveDot 2s ease-in-out infinite;
+}

@@ -47,15 +47,15 @@ export default function CfrDonut({ snapshot }) {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minWidth: 0, overflow: 'hidden' }}>
                     {[
                         { label: 'Successful', value: success, color: 'var(--elite)' },
                         { label: 'Failed',     value: failed,  color: 'var(--low)'   },
                     ].map(item => (
-                        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, boxShadow: `0 0 6px ${item.color}`, flexShrink: 0 }} />
-                            <span style={{ fontSize: '12px', color: 'var(--muted)', flex: 1 }}>{item.label}</span>
-                            <span style={{ fontSize: '16px', fontWeight: 600, fontFamily: 'var(--mono)', color: 'var(--text)' }}>{item.value}</span>
+                            <span style={{ fontSize: '12px', color: 'var(--muted)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                            <span style={{ fontSize: '16px', fontWeight: 600, fontFamily: 'var(--mono)', color: 'var(--text)', flexShrink: 0 }}>{item.value}</span>
                         </div>
                     ))}
                     <div style={{ marginTop: '4px' }}>
