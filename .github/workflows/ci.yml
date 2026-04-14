@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ─────────────────────────────────────────
+  # Ingestion Service
+  # ─────────────────────────────────────────
+  ingestion-service:
+    name: Ingestion Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test
+        working-directory: ingestion-service
+        run: ./mvnw verify --no-transfer-progress
+
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingestion-service-jar
+          path: ingestion-service/target/*.jar
+          retention-days: 7
+
+  # ─────────────────────────────────────────
+  # Processing Service
+  # ─────────────────────────────────────────
+  processing-service:
+    name: Processing Service
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: flowmetrics_test
+          POSTGRES_USER: flowmetrics
+          POSTGRES_PASSWORD: flowmetrics_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      rabbitmq:
+        image: rabbitmq:3.13-alpine
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test
+        working-directory: processing-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/flowmetrics_test
+          SPRING_DATASOURCE_USERNAME: flowmetrics
+          SPRING_DATASOURCE_PASSWORD: flowmetrics_test
+          SPRING_RABBITMQ_HOST: localhost
+          SPRING_RABBITMQ_PORT: 5672
+        run: ./mvnw verify --no-transfer-progress
+
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: processing-service-jar
+          path: processing-service/target/*.jar
+          retention-days: 7
+
+  # ─────────────────────────────────────────
+  # React Dashboard
+  # ─────────────────────────────────────────
+  dashboard-ui:
+    name: Dashboard UI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: dashboard-ui/package-lock.json
+
+      - name: Install dependencies
+        working-directory: dashboard-ui
+        run: npm ci
+
+      - name: Build
+        working-directory: dashboard-ui
+        run: npm run build
+
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-ui-dist
+          path: dashboard-ui/dist/
+          retention-days: 7
