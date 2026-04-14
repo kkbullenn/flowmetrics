@@ -69,61 +69,70 @@ services:
       - ./database/migrations:/flyway/sql
 
   # ─────────────────────────────────────────
-  # Ingestion Service (uncomment when ready)
+  # Ingestion Service
   # ─────────────────────────────────────────
-  # ingestion-service:
-  #   build: ./ingestion-service
-  #   container_name: flowmetrics-ingestion
-  #   restart: unless-stopped
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flowmetrics
-  #     SPRING_DATASOURCE_USERNAME: flowmetrics
-  #     SPRING_DATASOURCE_PASSWORD: flowmetrics_dev
-  #     SPRING_RABBITMQ_HOST: rabbitmq
-  #     SPRING_RABBITMQ_PORT: 5672
-  #     SPRING_RABBITMQ_USERNAME: flowmetrics
-  #     SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
-  #     GITHUB_WEBHOOK_SECRET: your_webhook_secret_here
-  #   ports:
-  #     - "8080:8080"
+  ingestion-service:
+    build: ./ingestion-service
+    container_name: flowmetrics-ingestion
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: flowmetrics
+      SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
+      FLOWMETRICS_GITHUB_WEBHOOK-SECRET: ${GITHUB_WEBHOOK_SECRET}
+      SPRING_AUTOCONFIGURE_EXCLUDE: >-
+        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,
+        org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,
+        org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+    ports:
+      - "8080:8080"
 
   # ─────────────────────────────────────────
-  # Processing Service (uncomment when ready)
+  # Processing Service
   # ─────────────────────────────────────────
-  # processing-service:
-  #   build: ./processing-service
-  #   container_name: flowmetrics-processing
-  #   restart: unless-stopped
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flowmetrics
-  #     SPRING_DATASOURCE_USERNAME: flowmetrics
-  #     SPRING_DATASOURCE_PASSWORD: flowmetrics_dev
-  #     SPRING_RABBITMQ_HOST: rabbitmq
-  #     SPRING_RABBITMQ_PORT: 5672
-  #     SPRING_RABBITMQ_USERNAME: flowmetrics
-  #     SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
-  #   ports:
-  #     - "8081:8081"
+  processing-service:
+    build: ./processing-service
+    container_name: flowmetrics-processing
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flowmetrics
+      SPRING_DATASOURCE_USERNAME: flowmetrics
+      SPRING_DATASOURCE_PASSWORD: flowmetrics_dev
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: flowmetrics
+      SPRING_RABBITMQ_PASSWORD: flowmetrics_dev
+      SPRING_FLYWAY_ENABLED: "false"
+    ports:
+      - "8081:8081"
+
 
   # ─────────────────────────────────────────
-  # React Dashboard (uncomment when ready)
+  # React Dashboard
   # ─────────────────────────────────────────
-  # dashboard-ui:
-  #   build: ./dashboard-ui
-  #   container_name: flowmetrics-dashboard
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3000:3000"
+  dashboard-ui:
+    build: ./dashboard-ui
+    container_name: flowmetrics-dashboard
+    restart: unless-stopped
+    depends_on:
+      - processing-service
+    ports:
+      - "3000:3000"
 
 volumes:
   postgres_data:

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8081/api/metrics';
+const BASE_URL = '/api/metrics';
 
 export const getRepositories = () =>
     axios.get(`${BASE_URL}/repositories`).then(r => r.data);
