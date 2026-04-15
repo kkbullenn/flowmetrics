@@ -258,6 +258,9 @@ Historical analysis and reporting. Intended for engineering managers and stakeho
 - Trends page — four line charts showing metric movement over time
 - Deployments page — deployment history table, status bar chart, incident log
 
+<img width="2031" height="1134" alt="image" src="https://github.com/user-attachments/assets/9801cbea-21d2-4e5c-a788-dd943652aebe" />
+
+
 Both dashboards read from the same `dora_metrics_snapshots` table in PostgreSQL, keeping the visualization layer simple and decoupled from computation logic.
 
 ---
