@@ -18,6 +18,7 @@ The four DORA metrics it tracks:
 | **Mean Time to Recovery** | How long it takes to recover from a failed deployment |
 
 Each metric is classified into a performance tier — Elite, High, Medium, or Low — based on the official DORA research benchmarks.
+<img width="2560" height="1288" alt="image" src="https://github.com/user-attachments/assets/fa0e59ce-9199-40b9-b68d-c905fc4d9822" />
 
 ---
 
