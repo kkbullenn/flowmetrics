@@ -274,3 +274,15 @@ FlowMetrics uses a simple but effective auto-detection model:
 3. `time_to_recovery_seconds` is a generated column — PostgreSQL computes it automatically from the two timestamps
 
 This means no manual incident management is required — the system infers incidents directly from deployment outcomes.
+
+---
+
+##  License
+
+This project currently has no specified license, you can use it however you'd like :).
+
+---
+
+## 👨‍💻 Author
+
+Developed end to end completely by Bullen Kosa.
